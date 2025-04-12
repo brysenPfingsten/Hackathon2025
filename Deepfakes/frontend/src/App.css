@@ -29,8 +29,8 @@
 }
 
 .navbar {
-  width: 117%;
-  max-width: 120%;
+  width: 100%;
+  max-width: 100%;
   padding: 1rem 2rem;
   background-color: #1a1a1a;
   border-bottom: 1px solid #333;

@@ -1,21 +1,39 @@
+import { Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar/NavBar';
 import WhatIsDeepfake from './components/sections/WhatIsDeepfake/WhatIsDeepfake';
 import DeepfakeUses from './components/sections/DeepfakeUses/DeepfakeUses';
 import DetectDeepfakes from './components/sections/DetectDeepfakes/DetectDeepfakes';
 import ImageStream from './components/ImageStream/ImageStream';
+import FlashcardGame from './pages/Game/FlashcardGame';
+import Model from './pages/Model/Model';
+
 import './App.css';
+
+function LandingPage() {
+  return (
+    <>
+      <WhatIsDeepfake />
+      <DeepfakeUses />
+      <DetectDeepfakes />
+      <ImageStream />
+    </>
+  );
+}
 
 function App() {
   return (
+    <>
+    <NavBar />
     <div className="app">
-      <NavBar />
       <main className="main-content">
-        <WhatIsDeepfake />
-        <DeepfakeUses />
-        <DetectDeepfakes />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/challenge" element={<FlashcardGame />} />
+          <Route path="/model" element={<Model />} />
+        </Routes>
       </main>
-      <ImageStream />
     </div>
+    </>
   );
 }
 
