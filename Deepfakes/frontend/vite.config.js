@@ -9,7 +9,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://backend:8000',
-      '/image': 'http://backend:8000'
+      '/image': 'http://backend:8000',
+      'video': 'http://backend:8000'
     },
   },
   resolve: {

@@ -8,16 +8,7 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 
-RUN npm install -g shadcn-ui@latest
-
-
 COPY . .
-
-
-RUN shadcn-ui init --yes && \
-    shadcn-ui add card && \
-    shadcn-ui add button
-
 
 RUN npm run build
 
