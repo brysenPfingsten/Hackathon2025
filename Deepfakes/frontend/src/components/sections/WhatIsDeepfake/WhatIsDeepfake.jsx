@@ -1,6 +1,6 @@
 import './WhatIsDeepfake.css';
 import whatisdeep from '../../../assets/whatisdeep.jpg';
-import deepcartoon from '../../../assets/Deepfakecartoon.jpeg';
+import deepcartoon from '../../../assets/Deepfakecartoon.jpg';
 
 export default function WhatIsDeepfake() {
   return (
