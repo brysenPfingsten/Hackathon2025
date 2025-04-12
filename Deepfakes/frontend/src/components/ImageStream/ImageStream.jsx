@@ -1,80 +1,53 @@
+import { useEffect, useState } from 'react';
 import './ImageStream.css';
 
-// Import images correctly
-import img1 from '../../assets/fake_1.jpg';
-import img2 from '../../assets/fake_2.jpg';
-import img3 from '../../assets/fake_3.jpg';
-import img4 from '../../assets/fake_4.jpg';
-import img5 from '../../assets/fake_5.jpg';
-import img6 from '../../assets/fake_6.jpg';
-import img7 from '../../assets/fake_7.jpg';
-import img8 from '../../assets/fake_8.jpg';
-import img9 from '../../assets/fake_9.jpg';
-import img10 from '../../assets/fake_10.jpg';
-import img11 from '../../assets/fake_11.jpg';
-import img12 from '../../assets/fake_12.jpg';
-import img13 from '../../assets/fake_13.jpg';
-import img14 from '../../assets/fake_14.jpg';
-import img15 from '../../assets/fake_15.jpg';
-import img16 from '../../assets/fake_16.jpg';
-import img17 from '../../assets/fake_17.jpg';
-import img18 from '../../assets/fake_18.jpg';
-import img19 from '../../assets/fake_19.jpg';
-import img20 from '../../assets/fake_20.jpg';
-import img21 from '../../assets/fake_21.jpg';
-import img22 from '../../assets/fake_22.jpg';
-import img23 from '../../assets/fake_23.jpg';
-import img24 from '../../assets/fake_24.jpg';
-import img25 from '../../assets/fake_25.jpg';
-import img26 from '../../assets/fake_26.jpg';
-import img27 from '../../assets/fake_27.jpg';
+const IMAGE_HEIGHT = 256;
+const GAP = 20;
+const SCROLL_SPEED = 500;
 
+const ImageStream = () => {
+  const [images, setImages] = useState([]);
 
-const images = [img1, img2, img3, img4, img5, 
-  img6, img7, img8, img9, img10, img11, img12,
-  img13, img14, img15, img16, img17, img18, img19,
-  img20, img21, img22, img23, img24, img25, img26, img27];
+  useEffect(() => {
+    fetch("/api/images/random-batch?count=50")
+      .then(res => res.json())
+      .then(data => {
+        const urls = data.map(item => item.url);
+        setImages([...urls, ...urls]);
+      });
+  }, []);
   
-  const IMAGE_HEIGHT = 256; // Fixed height as requested
-  const GAP = 20; // Space between images
-  const SCROLL_SPEED = 500; // Pixels per second (adjust speed here)
-  
-  const ImageStream = () => {
-    
-    // Duplicate images for seamless looping
-    const duplicatedImages = [...images, ...images];
-    
-    // Calculate total height needed for the container
-    const containerHeight = (IMAGE_HEIGHT + GAP) * duplicatedImages.length;
-  
-    return (
-      <div className="image-stream">
-        <div 
-          className="scrolling-container"
-          style={{
-            height: `${containerHeight}px`,
-            animationDuration: `${containerHeight / SCROLL_SPEED}s`
-          }}
-        >
-          {duplicatedImages.map((img, index) => (
-            <div 
-              key={`img-${index}`}
-              className="image-wrapper"
-              style={{
-                height: `${IMAGE_HEIGHT}px`,
-                marginBottom: `${GAP}px`
-              }}
-            >
-              <img 
-                src={img} 
-                alt={`Deepfake example ${index % images.length + 1}`}
-                className="stream-image"
-              />
-            </div>
-          ))}
-        </div>
+
+  const containerHeight = (IMAGE_HEIGHT + GAP) * images.length;
+
+  return (
+    <div className="image-stream">
+      <div 
+        className="scrolling-container"
+        style={{
+          height: `${containerHeight}px`,
+          animationDuration: `${containerHeight / SCROLL_SPEED}s`
+        }}
+      >
+        {images.map((img, index) => (
+          <div 
+            key={`img-${index}`}
+            className="image-wrapper"
+            style={{
+              height: `${IMAGE_HEIGHT}px`,
+              marginBottom: `${GAP}px`
+            }}
+          >
+            <img 
+              src={img} 
+              alt={`Deepfake ${index}`}
+              className="stream-image"
+            />
+          </div>
+        ))}
       </div>
-    );
-  };
-  
-  export default ImageStream;
+    </div>
+  );
+};
+
+export default ImageStream;
