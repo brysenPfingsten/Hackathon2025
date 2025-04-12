@@ -9,7 +9,7 @@ const videos = [
     src: "Deepfakes\frontend\src\assets\20250412_1120_Serene Beach Greetings_simple_compose_01jrn9d0a7f6680cjv7wh5567p.mp4",
     answer: "fake",
     hint: "Look at the Shadows."
-  }
+  },
   {
     id: 1,
     title: "Video 1: Easy Mode",
