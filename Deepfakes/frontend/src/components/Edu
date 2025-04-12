@@ -10,7 +10,14 @@ const videos = [
     answer: "fake",
     hint: "Look at the Shadows."
   }
-  
+  {
+    id: 1,
+    title: "Video 1: Easy Mode",
+    src: "Deepfakes\frontend\src\assets\videoplayback (1).mp4",
+    answer: "Real",
+    hint: "Look Closely at the hands and facial expressions"
+  }
+
 ];
 
 export default function DeepfakeDetectionModule() {
