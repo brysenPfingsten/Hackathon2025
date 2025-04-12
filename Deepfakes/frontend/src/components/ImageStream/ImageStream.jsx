@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './ImageStream.css';
 
 // Import images correctly
@@ -32,28 +31,50 @@ import img27 from '../../assets/fake_27.jpg';
 
 
 const images = [img1, img2, img3, img4, img5, 
-  img6, img7, img8, img9, img10, img11, img12
+  img6, img7, img8, img9, img10, img11, img12,
   img13, img14, img15, img16, img17, img18, img19,
-  img20, img21, img22, img23, img24, img25, img26,
-  img27];
-
-export default function ImageStream() {
-  const [imageList] = useState([...images, ...images]); // Duplicate for seamless loop
-
-  return (
-    <div className="image-stream">
-      {imageList.map((img, index) => (
+  img20, img21, img22, img23, img24, img25, img26, img27];
+  
+  const IMAGE_HEIGHT = 256; // Fixed height as requested
+  const GAP = 20; // Space between images
+  const SCROLL_SPEED = 500; // Pixels per second (adjust speed here)
+  
+  const ImageStream = () => {
+    
+    // Duplicate images for seamless looping
+    const duplicatedImages = [...images, ...images];
+    
+    // Calculate total height needed for the container
+    const containerHeight = (IMAGE_HEIGHT + GAP) * duplicatedImages.length;
+  
+    return (
+      <div className="image-stream">
         <div 
-          key={index} 
-          className="stream-item"
+          className="scrolling-container"
           style={{
-            animationDuration: `${images.length * 2}s`,
-            animationDelay: `${index * 1}s`
+            height: `${containerHeight}px`,
+            animationDuration: `${containerHeight / SCROLL_SPEED}s`
           }}
         >
-          <img src={img} alt={`Deepfake example ${index + 1}`} />
+          {duplicatedImages.map((img, index) => (
+            <div 
+              key={`img-${index}`}
+              className="image-wrapper"
+              style={{
+                height: `${IMAGE_HEIGHT}px`,
+                marginBottom: `${GAP}px`
+              }}
+            >
+              <img 
+                src={img} 
+                alt={`Deepfake example ${index % images.length + 1}`}
+                className="stream-image"
+              />
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
-  );
-}
+      </div>
+    );
+  };
+  
+  export default ImageStream;
