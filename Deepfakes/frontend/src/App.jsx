@@ -2,6 +2,7 @@ import NavBar from './components/NavBar/NavBar';
 import WhatIsDeepfake from './components/sections/WhatIsDeepfake/WhatIsDeepfake';
 import DeepfakeUses from './components/sections/DeepfakeUses/DeepfakeUses';
 import DetectDeepfakes from './components/sections/DetectDeepfakes/DetectDeepfakes';
+import ImageStream from './components/ImageStream/ImageStream';
 import './App.css';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <DeepfakeUses />
         <DetectDeepfakes />
       </main>
+      <ImageStream />
     </div>
   );
 }

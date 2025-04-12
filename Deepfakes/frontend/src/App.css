@@ -19,22 +19,38 @@
   box-sizing: border-box;
 }
 
+/* Update these styles in your App.css */
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  max-width: calc(100% - 250px); /* Account for image stream */
+  margin-right: 250px; /* Space for image stream */
+}
+
+.navbar {
+  width: 117%;
+  max-width: 120%;
+  padding: 1rem 2rem;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
 }
 
 .main-content {
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
   width: 100%;
-  flex: 1;
+  max-width: 100%;
+  margin: 0;
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    padding: 1rem;
+/* Hide image stream on mobile */
+@media (max-width: 1200px) {
+  .app {
+    max-width: 100%;
+    margin-right: 0;
+  }
+  
+  .image-stream {
+    display: none;
   }
 }
