@@ -1,13 +1,15 @@
 import pytor from '../../assets/pytorchvisual.jpg';
-import '../Model/model.css'
+import '../Model/model.css';
+import {UploadWindow} from '../../components/ui/upload';
 
 export default function Model() {
   return (
     <section id="what">
     <h2>🕵️ Try out our model!</h2>
-    <p>
-    PLACEHOLDER FOR DEEPFAKE DETECTION MODEL 
-    </p>
+    <UploadWindow>
+      
+    </UploadWindow>
+
     <h3>How we made the model</h3>
     <p>
     Deepfake technology primarily uses machine learning techniques called autoencoders and generative adversarial networks (GANs). 
