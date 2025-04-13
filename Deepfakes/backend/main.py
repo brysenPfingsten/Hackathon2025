@@ -1,15 +1,58 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+import shutil
+import uuid
+from pathlib import Path
 import sqlite3
 import os
+
+from checker import DeepfakeDetector
+
+detector = DeepfakeDetector()
 
 app = FastAPI()
 
 app.mount("/images", StaticFiles(directory="Dataset"), name="images")
 app.mount("/videos", StaticFiles(directory="Dataset/Videos"), name="videos")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 DB_PATH = "images.db"
+TEMP_DIR = Path("/tmp/deepfake_check")
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+@app.post("/api/check")
+async def check(file: UploadFile = File(...)):
+    if file.content_type != "image/jpeg":
+        raise HTTPException(status_code=400, detail="Only JPEG files are allowed")
+
+    # Save to a unique file in the temp directory
+    file_id = str(uuid.uuid4())
+    temp_path = TEMP_DIR / f"{file_id}.jpg"
+    
+    try:
+        with temp_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        # Run detection logic
+        label, confidence = detector.predict_image(temp_path)
+
+        # Return structured JSON
+        return {
+            "label": label,
+            "confidence": confidence
+        }
+    finally:
+        # Clean up the file after processing
+        if temp_path.exists():
+            temp_path.unlink()
 
 @app.get("/api/images/random-batch")
 def get_random_images(count: int = 50, split: str = None, label: str = None):

@@ -1,8 +1,47 @@
 import '../Model/model.css';
 import UploadWindow from '../../components/ui/upload';
-import React from "react";
+import React, { useState } from "react";
 
 export default function Model() {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === "image/jpeg") {
+      setSelectedFile(file);
+      setError("");
+    } else {
+      setError("Only JPEG images are supported.");
+      setSelectedFile(null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const res = await fetch("/api/check", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await res.json();
+      setResult(data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to upload or process the file.");
+    }
+  };
+
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto text-white leading-relaxed">
     <h1 className="text-3xl font-bold mb-6 text-center">Deepfake Detection Model Summary</h1>
@@ -92,6 +131,32 @@ export default function Model() {
         </li>
         </ul>
         </section>
+
+        <section id="upload" className="mt-10 bg-gray-900 p-6 rounded shadow-lg">
+        <h2 className="text-2xl font-semibold mb-4">Try It Yourself: Upload a JPEG</h2>
+
+        <input 
+          type="file" 
+          accept="image/jpeg" 
+          onChange={handleFileChange} 
+          className="mb-4 block text-white"
+        />
+        <button 
+          onClick={handleUpload} 
+          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-semibold"
+        >
+          Upload and Check
+        </button>
+
+        {error && <p className="text-red-500 mt-4">{error}</p>}
+
+        {result && (
+          <div className="mt-6 bg-gray-800 p-4 rounded text-green-300">
+            <p><strong>Label:</strong> {result.label}</p>
+            <p><strong>Confidence:</strong> {(result.confidence * 100).toFixed(2)}%</p>
+          </div>
+        )}
+      </section>
         </div>
       );
     }
