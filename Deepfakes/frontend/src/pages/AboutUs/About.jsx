@@ -5,23 +5,32 @@ export default function About() {
     { 
       name: "Aaron Stanway", 
       role: "Sophomore", 
-      bio: "Full-stack engineer with a passion for AI and data visualization." },
+      bio: "I currently study Financial Mathematics at Seton Hall. I am looking to use my financial modeling and coding skills to either work as a Quantitative Researcher for a Hedge fund or create my own.",
+      img: "src/assets/pfps/aaron.jpg"
+    },
     { 
       name: "Brysen Pfingsten", 
       role: "Sophomore", 
-      bio: "Works on training and evaluating deepfake detection models." },
+      bio: "I am a Computer Science major with a research interest in Constraint Logic Programming. After college, I plan on moving to New York and working in the tech sector.",
+      img: "src/assets/pfps/brysen.jpeg" },
     { 
       name: "Collin Delbridge", 
       role: "Junior", 
-      bio: "Designs sleek interfaces and ensures seamless UX." },
+      bio: "I'm a Computer Science major currently interning at GDIT in the Network Administration department. I’m also involved in cybersecurity research and plan to continue growing as a software developer.",
+      img: "src/assets/pfps/colin.jpg"
+    },
     { 
       name: "Dimitri Short", 
       role: "Senior", 
-      bio: "Prepares datasets and performs statistical evaluations." },
+      bio: "I'm Dimitri, I'm a computer science and data science student here at Seton Hall with a strong interest in technology. I've always been interested by how technology really works which has led me to enter this field. ",
+      img: "src/assets/pfps/dimitri.jpeg"
+    },
     { 
       name: "Thorin Collins", 
       role: "Sophomore", 
-      bio: "Handles deployment, scaling, and system reliability." },
+      bio: "I'm an IT Management major with a minor in cybersecurity. I currently work part-time as a Security Operations Center (SOC) analyst. After graduation, I plan to attend law school and pursue a career in cybersecurity law.",
+      img: "src/assets/pfps/thorin.jpg"
+    },
   ];
 
   return (
@@ -30,7 +39,7 @@ export default function About() {
       <div className="team-container">
         {members.map((member, idx) => (
           <div key={idx} className="team-member">
-            <div className="profile-pic" />
+            <img src={member.img} alt={`${member.name}'s profile`} className="profile-pic" />
             <h3>{member.name}</h3>
             <p className="role">{member.role}</p>
             <p>{member.bio}</p>
