@@ -2,11 +2,26 @@ import './About.css';
 
 export default function About() {
   const members = [
-    { name: "Brysen Pfingsten", role: "Lead Developer", bio: "Full-stack engineer with a passion for AI and data visualization." },
-    { name: "Jane Smith", role: "ML Engineer", bio: "Works on training and evaluating deepfake detection models." },
-    { name: "Tom Johnson", role: "Frontend Engineer", bio: "Designs sleek interfaces and ensures seamless UX." },
-    { name: "Emily Chen", role: "Data Scientist", bio: "Prepares datasets and performs statistical evaluations." },
-    { name: "Liam Patel", role: "DevOps", bio: "Handles deployment, scaling, and system reliability." },
+    { 
+      name: "Aaron Stanway", 
+      role: "Sophomore", 
+      bio: "Full-stack engineer with a passion for AI and data visualization." },
+    { 
+      name: "Brysen Pfingsten", 
+      role: "Sophomore", 
+      bio: "Works on training and evaluating deepfake detection models." },
+    { 
+      name: "Collin Delbridge", 
+      role: "Junior", 
+      bio: "Designs sleek interfaces and ensures seamless UX." },
+    { 
+      name: "Dimitri Short", 
+      role: "Senior", 
+      bio: "Prepares datasets and performs statistical evaluations." },
+    { 
+      name: "Thorin Collins", 
+      role: "Sophomore", 
+      bio: "Handles deployment, scaling, and system reliability." },
   ];
 
   return (
