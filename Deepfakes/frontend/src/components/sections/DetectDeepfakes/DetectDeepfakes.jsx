@@ -1,10 +1,15 @@
 import './DetectDeepfakes.css';
-import howtell from'../../../assets/Untitled-1.jpeg';
+import monalisa from'../../../assets/monalisa.jpg';
 
 export default function DetectDeepfakes() {
   return (
     <section id="detect">
     <h2>How Can I Detect Deepfakes?</h2>
+    <img
+    src={monalisa}
+    alt="How to tell if an image is fake"
+    style={{ width: 'calc(100vw - 700px)', display: 'block', margin: '0 auto' }}
+    />
     <p>
     While deepfakes are becoming increasingly sophisticated, there are still signs that can help identify them:
     </p>
@@ -32,13 +37,6 @@ export default function DetectDeepfakes() {
     Sometimes it feels like the sound is floating over the video rather than coming from it.
     Even small mismatches between audio and visuals can break the illusion and reveal manipulation.
     </li>
-    
-    <img
-    src={howtell}
-    alt="How to tell if an image is fake"
-    style={{ width: 'calc(100vw - 700px)', display: 'block', margin: '0 auto' }}
-    />
-    
     <li>
     <strong>Unnatural lighting/shadows:</strong>Unnatural lighting and shadows can be a clear sign of a deepfake. 
     AI often has trouble recreating realistic and consistent lighting across a person’s face, 
@@ -66,13 +64,6 @@ export default function DetectDeepfakes() {
     or just oddly timed should raise suspicion. Always consider whether the setting, tone, and message actually line up with what you'd expect in reality.
     </li>
     </ul>
-    <div className="tools">
-    <h3>Detection Tools</h3>
-    <p>
-    Several organizations are developing deepfake detection tools, including Microsoft's Video Authenticator, 
-    Intel's FakeCatcher, or even our tool!
-    </p>
-    </div>
     </section>
   );
 }

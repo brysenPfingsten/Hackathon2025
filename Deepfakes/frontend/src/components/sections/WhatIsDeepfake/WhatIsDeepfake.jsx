@@ -1,6 +1,5 @@
 import './WhatIsDeepfake.css';
 import whatisdeep from '../../../assets/whatisdeep.jpg';
-import deepcartoon from '../../../assets/Deepfakecartoon.jpg';
 
 export default function WhatIsDeepfake() {
   return (
@@ -11,17 +10,14 @@ export default function WhatIsDeepfake() {
     The term combines "deep learning" and "fake." These sophisticated AI-generated forgeries can create realistic-looking videos, images, 
     or audio recordings that appear authentic but are completely fabricated.
     </p>
-    <img src={whatisdeep} 
-    alt="What is a Deepfake?" 
-    style={{ width: 'calc(100vw - 700px)', display: 'block', margin: '0 auto' }} />
     <p>
     Deepfake technology primarily uses machine learning techniques called autoencoders and generative adversarial networks (GANs). 
     These AI models analyze and learn from large datasets of real images or videos of a person, then can generate new content featuring 
     that person saying or doing things they never actually did.
     </p>
-    <img src={deepcartoon} 
-    alt="Deepfakes as cartoons"
-    style={{ width: 'calc(100vw - 700px)', display: 'block', margin: '0 auto' }}   />
+    <img src={whatisdeep} 
+    alt="What is a Deepfake?" 
+    style={{ width: 'calc(100vw - 700px)', display: 'block', margin: '0 auto' }} />
     </section>
   );
 }
