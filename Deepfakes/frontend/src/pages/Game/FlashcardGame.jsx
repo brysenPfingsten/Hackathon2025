@@ -12,7 +12,7 @@ export default function FlashcardGame() {
   const [gameStarted, setGameStarted] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Separate hint arrays for videos and images
+  // Divide the hints into separate arrays for videos and images
   const videoHints = [
     "Look for unnatural blinking patterns or lack of blinking in videos.",
     "Watch for unnatural facial movements or expressions.",
@@ -27,7 +27,7 @@ export default function FlashcardGame() {
     "Check for teeth that look too perfect or unnatural."
   ];
 
-  // Combined media fetch function – accepts mediaType: "image" or "video"
+  // Combined media fetch function – mediaType should be either "image" or "video"
   const fetchRandomMedia = async (mediaType) => {
     setLoading(true);
     try {
@@ -47,7 +47,7 @@ export default function FlashcardGame() {
           mediaType === "image"
             ? imageHints[Math.floor(Math.random() * imageHints.length)]
             : videoHints[Math.floor(Math.random() * videoHints.length)],
-        mediaType,
+        mediaType, // storing the type might be useful for later
       });
     } catch (err) {
       console.error(err);
@@ -62,9 +62,9 @@ export default function FlashcardGame() {
     }
   };
 
-  // Fetch an initial media item on mount (randomly choosing type)
+  // On initial load, randomly choose a media type to fetch
   useEffect(() => {
-    const initialType = Math.random() > 0.9 ? "video" : "image";
+    const initialType = Math.random() > 0.5 ? "video" : "image";
     fetchRandomMedia(initialType);
   }, []);
 
@@ -82,17 +82,18 @@ export default function FlashcardGame() {
       setFeedback(`❌ Incorrect! The media was ${currentMedia.label}.`);
     }
 
-    // Scroll to the bottom of the card so feedback/next button is visible
+    // Smooth-scroll to the bottom of the card so feedback/next button is visible
     setTimeout(() => {
       const el = document.querySelector(`.${styles.cardContent}`);
       el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
+  // Next challenge loads a new media item with a random type
   const nextMedia = () => {
     setFeedback("");
     setShowHint(false);
-    const nextType = Math.random() > 0.9 ? "video" : "image";
+    const nextType = Math.random() > 0.5 ? "video" : "image";
     fetchRandomMedia(nextType);
   };
 
@@ -123,126 +124,157 @@ export default function FlashcardGame() {
 
   return (
     <div className={styles.pageWrapper}>
-      {/* --- Navigation Bar --- */}
-      <nav className={styles.navBar}>
-        <h1 className={styles.navTitle}>Deepfake Detection Challenge</h1>
-        {/* You can add nav links or other items here */}
-      </nav>
-      
-      {/* --- Main Game Section --- */}
-      <div className={styles.gameContainer}>
-        {/* The gameCard contains the media, game controls, and score */}
-        <Card className={styles.mainCard}>
-          <CardContent className={styles.cardContent}>
-            <div className={styles.mediaContainer}>
-              {loading ? (
-                <div className={styles.loadingContainer}>
-                  <div className={styles.loadingSpinner} />
-                  <p className={styles.loadingText}>Loading media…</p>
+      <div className={styles.container}>
+        <div className={styles.gameContainer}>
+          <div className={styles.cardContainer}>
+            {/* ---------- header ---------- */}
+            <header className={styles.header}>
+              <h1 className={styles.title}>Deepfake Detection Challenge</h1>
+              <p className={styles.subtitle}>
+                Test your ability to spot AI‑generated media
+              </p>
+            </header>
+
+            {/* ---------- score ---------- */}
+            <section className={styles.scorePanel}>
+              <div className={styles.scoreRow}>
+                <div className={styles.scoreItem}>
+                  Score: <span className={styles.scoreValue}>{score}</span>
                 </div>
-              ) : currentMedia?.url ? (
-                currentMedia.url.match(/\.(mp4|mov|webm)$/i) ? (
-                  <video
-                    key={currentMedia.url}
-                    className={styles.media}
-                    controls
-                    playsInline
-                    muted
-                    autoPlay
-                    onLoadedData={() => setLoading(false)}
-                    onError={() => setLoading(false)}
-                  >
-                    <source src={currentMedia.url} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                ) : (
-                  <img
-                    key={currentMedia.url}
-                    src={currentMedia.url}
-                    className={styles.media}
-                    alt="Guess if real or fake"
-                    onLoad={() => setLoading(false)}
-                    onError={() => setLoading(false)}
-                  />
-                )
-              ) : (
-                <div className={styles.errorMessage}>No media available</div>
-              )}
-            </div>
-
-            {/* Guess Buttons */}
-            {!feedback && (
-              <div className={styles.buttonGroup}>
-                <Button className={styles.gameButton} onClick={() => handleGuess("Real")}>
-                  Real
-                </Button>
-                <Button className={styles.gameButton} onClick={() => handleGuess("Fake")}>
-                  Fake
-                </Button>
-                <Button
-                  variant="outline"
-                  className={styles.gameButton}
-                  onClick={() => setShowHint(!showHint)}
-                >
-                  {showHint ? "Hide Hint" : "Show Hint"}
-                </Button>
+                <div className={styles.scoreItem}>
+                  Streak: <span className={styles.streakValue}>{streak}x</span>
+                </div>
               </div>
-            )}
+            </section>
 
-            {/* Hint */}
-            {showHint && (
-              <div className={styles.hintContainer}>
-                <p className={styles.hintText}>
-                  <span>💡</span> Hint: {currentMedia?.hint}
-                </p>
-              </div>
-            )}
+            <ProgressBar />
 
-            {/* Feedback & Next */}
-            {feedback && (
-              <div
-                className={`${styles.feedback} ${
-                  feedback.includes("✅") ? styles.correctFeedback : styles.incorrectFeedback
-                }`}
-              >
-                <p className={styles.feedbackText}>{feedback}</p>
-                {feedback.includes("❌") && (
-                  <p className={styles.encouragement}>Try the next one!</p>
+            {/* ---------- main card ---------- */}
+            <Card className={styles.mainCard}>
+              <CardContent className={styles.cardContent}>
+                <div className={styles.mediaContainer}>
+                  {loading ? (
+                    <div className={styles.loadingContainer}>
+                      <div className={styles.loadingSpinner} />
+                      <p className={styles.loadingText}>Loading media…</p>
+                    </div>
+                  ) : currentMedia?.url ? (
+                    currentMedia.url.match(/\.(mp4|mov|webm)$/i) ? (
+                      <video
+                        key={currentMedia.url}
+                        className={styles.media}
+                        controls
+                        playsInline
+                        muted
+                        autoPlay
+                        onLoadedData={() => setLoading(false)}
+                        onError={() => setLoading(false)}
+                      >
+                        <source src={currentMedia.url} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : (
+                      <img
+                        key={currentMedia.url}
+                        src={currentMedia.url}
+                        className={styles.media}
+                        alt="Guess if real or fake"
+                        onLoad={() => setLoading(false)}
+                        onError={() => setLoading(false)}
+                      />
+                    )
+                  ) : (
+                    <div className={styles.errorMessage}>No media available</div>
+                  )}
+                </div>
+
+                {/* Guess buttons */}
+                {!feedback && (
+                  <div className={styles.buttonGroup}>
+                    <Button
+                      className={styles.gameButton}
+                      onClick={() => handleGuess("Real")}
+                    >
+                      Real
+                    </Button>
+                    <Button
+                      className={styles.gameButton}
+                      onClick={() => handleGuess("Fake")}
+                    >
+                      Fake
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={styles.gameButton}
+                      onClick={() => setShowHint(!showHint)}
+                    >
+                      {showHint ? "Hide Hint" : "Show Hint"}
+                    </Button>
+                  </div>
                 )}
-                <Button className={styles.nextButton} onClick={nextMedia}>
-                  Next Challenge
-                </Button>
-              </div>
-            )}
 
-            {/* Reset (Visible when guessing) */}
-            {!feedback && (
-              <div className={styles.actionButtonContainer}>
-                <Button variant="outline" className={styles.resetButton} onClick={resetGame}>
-                  Reset Game
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                {/* Hint */}
+                {showHint && (
+                  <div className={styles.hintContainer}>
+                    <p className={styles.hintText}>
+                      <span>💡</span> Hint: {currentMedia?.hint}
+                    </p>
+                  </div>
+                )}
 
-        {/* Mastery Status */}
-        {gameStarted && (
-          <div className={styles.masteryContainer}>
-            <p className={styles.streakBonus}>
-              Current streak bonus: {streak * 5} extra points per correct answer
-            </p>
-            {score >= 500 ? (
-              <p className={styles.congratulations}>
-                🎉 Congratulations! You’ve reached mastery!
-              </p>
-            ) : (
-              <p className={styles.pointsNeeded}>
-                {500 - score} points needed for mastery
-              </p>
+                {/* Feedback + Next Challenge */}
+                {feedback && (
+                  <div
+                    className={`${styles.feedback} ${
+                      feedback.includes("✅")
+                        ? styles.correctFeedback
+                        : styles.incorrectFeedback
+                    }`}
+                  >
+                    <p className={styles.feedbackText}>{feedback}</p>
+                    {feedback.includes("❌") && (
+                      <p className={styles.encouragement}>Try the next one!</p>
+                    )}
+                    <Button className={styles.nextButton} onClick={nextMedia}>
+                      Next Challenge
+                    </Button>
+                  </div>
+                )}
+
+                {/* Reset (only when guessing) */}
+                {!feedback && (
+                  <div className={styles.actionButtonContainer}>
+                    <Button
+                      variant="outline"
+                      className={styles.resetButton}
+                      onClick={resetGame}
+                    >
+                      Reset Game
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Mastery status */}
+            {gameStarted && (
+              <div className={styles.masteryContainer}>
+                <p className={styles.streakBonus}>
+                  Current streak bonus: {streak * 5} extra points per correct answer
+                </p>
+                {score >= 500 ? (
+                  <p className={styles.congratulations}>
+                    🎉 Congratulations! You’ve reached mastery!
+                  </p>
+                ) : (
+                  <p className={styles.pointsNeeded}>
+                    {500 - score} points needed for mastery
+                  </p>
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
