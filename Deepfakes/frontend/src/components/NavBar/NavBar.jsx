@@ -23,6 +23,7 @@ export default function NavBar() {
         )}
         <Link to="/challenge">Challenge</Link>
         <Link to="/model">Try Our Model</Link>
+        <Link to ="/about">About Us</Link>
       </div>
     </nav>
   );

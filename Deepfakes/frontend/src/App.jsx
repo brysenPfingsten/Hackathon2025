@@ -6,6 +6,7 @@ import DetectDeepfakes from './components/sections/DetectDeepfakes/DetectDeepfak
 import ImageStream from './components/ImageStream/ImageStream';
 import FlashcardGame from './pages/Game/FlashcardGame';
 import Model from './pages/Model/Model';
+import About from './pages/AboutUs/About';
 
 import './App.css';
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/challenge" element={<FlashcardGame />} />
           <Route path="/model" element={<Model />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </main>
     </div>
