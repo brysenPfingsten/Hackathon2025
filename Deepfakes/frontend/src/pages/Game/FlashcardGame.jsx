@@ -64,7 +64,7 @@ export default function FlashcardGame() {
 
   // On initial load, randomly choose a media type to fetch
   useEffect(() => {
-    const initialType = Math.random() > 0.5 ? "video" : "image";
+    const initialType = Math.random() > 0.9 ? "video" : "image";
     fetchRandomMedia(initialType);
   }, []);
 
@@ -93,7 +93,7 @@ export default function FlashcardGame() {
   const nextMedia = () => {
     setFeedback("");
     setShowHint(false);
-    const nextType = Math.random() > 0.5 ? "video" : "image";
+    const nextType = Math.random() > 0.9 ? "video" : "image";
     fetchRandomMedia(nextType);
   };
 
@@ -103,7 +103,7 @@ export default function FlashcardGame() {
     setGameStarted(false);
     setFeedback("");
     setShowHint(false);
-    const nextType = Math.random() > 0.5 ? "video" : "image";
+    const nextType = Math.random() > 0.9 ? "video" : "image";
     fetchRandomMedia(nextType);
   };
 

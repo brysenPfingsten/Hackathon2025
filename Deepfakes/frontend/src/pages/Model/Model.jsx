@@ -132,31 +132,81 @@ export default function Model() {
         </ul>
         </section>
 
-        <section id="upload" className="mt-10 bg-gray-900 p-6 rounded shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">Try It Yourself: Upload a JPEG</h2>
+        <section id="upload">
+  <h2>Upload Image for Analysis</h2>
+  
+  <div className="upload-container">
+  <label className="upload-box relative cursor-pointer block w-fit mx-auto">
+  <input 
+    type="file" 
+    accept="image/jpeg" 
+    onChange={handleFileChange} 
+    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+  />
 
-        <input 
-          type="file" 
-          accept="image/jpeg" 
-          onChange={handleFileChange} 
-          className="mb-4 block text-white"
-        />
-        <button 
-          onClick={handleUpload} 
-          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-semibold"
-        >
-          Upload and Check
-        </button>
+  {selectedFile ? (
+    <>
+      <img 
+        src={URL.createObjectURL(selectedFile)} 
+        alt="Preview" 
+        className="upload-preview rounded-md w-48 h-48 object-cover"
+      />
+      <div className="upload-placeholder absolute inset-0 flex items-end justify-center bg-black bg-opacity-30 text-white text-sm rounded-md">
+        <span className="mb-2">Click to change</span>
+      </div>
+    </>
+  ) : (
+    <div className="upload-placeholder flex flex-col items-center justify-center border-2 border-dashed rounded-md p-6 w-64 h-48 text-center text-gray-400">
+      <svg 
+        className="mb-2"
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+        width="40"
+        height="40"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <p>Click to upload JPEG</p>
+      <p className="text-sm">(Max size: 5MB)</p>
+    </div>
+  )}
+</label>
 
-        {error && <p className="text-red-500 mt-4">{error}</p>}
 
-        {result && (
-          <div className="mt-6 bg-gray-800 p-4 rounded text-green-300">
-            <p><strong>Label:</strong> {result.label}</p>
-            <p><strong>Confidence:</strong> {(result.confidence * 100).toFixed(2)}%</p>
-          </div>
-        )}
-      </section>
+    <button 
+      onClick={handleUpload} 
+      className="upload-button"
+      disabled={!selectedFile}
+    >
+      Analyze Image
+    </button>
+
+    {error && (
+      <div className="result-box" style={{border: '1px solid #ff6464'}}>
+        <p className="text-center" style={{color: '#ff6464'}}>⚠️ {error}</p>
+      </div>
+    )}
+
+    {result && (
+      <div className="result-box">
+        <h3 className="text-center mb-3" style={{color: '#646cff'}}>Analysis Results</h3>
+        <div className="result-item">
+          <span>Label:</span>
+          <span style={{color: result.label === 'Fake' ? '#ff6464' : '#64ff88'}}>
+            {result.label}
+          </span>
+        </div>
+        <div className="result-item">
+          <span>Confidence:</span>
+          <span style={{color: '#646cff'}}>
+            {(result.confidence * 100).toFixed(2)}%
+          </span>
+        </div>
+      </div>
+    )}
+  </div>
+</section>
         </div>
       );
     }
