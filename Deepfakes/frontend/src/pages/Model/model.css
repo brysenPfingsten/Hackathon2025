@@ -22,7 +22,6 @@
     }
   }
 
-  /* Upload Section */
 #upload {
   background-color: #1a1a1a;
   padding: 2rem 2.5rem;
@@ -70,8 +69,6 @@
   cursor: pointer;
   z-index: 2;
 }
-
-
 
 .upload-preview {
   max-width: 100%;

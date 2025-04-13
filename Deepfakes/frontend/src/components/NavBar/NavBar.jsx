@@ -8,8 +8,8 @@ export default function NavBar() {
   return (
     <nav className="navbar">
       <div className="logo">
-        <img src="/seton_hall_logo.png" alt="Seton Hall Logo" />
-        <span>Deepfake Awareness</span>
+        <img src="/logo_white.png" alt="RealEyes Logo" />
+        <span>Deepfake Awareness and Detection</span>
       </div>
       <div className="nav-links">
         {isLandingPage ? (
