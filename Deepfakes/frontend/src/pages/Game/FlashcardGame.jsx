@@ -1,216 +1,281 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
+import styles from "./FlashcardGame.module.css";
 
-export default function DeepfakeGame() {
-  const [currentImage, setCurrentImage] = useState(null);
+export default function FlashcardGame() {
+  const [currentMedia, setCurrentMedia] = useState(null); // {url, label, hint, mediaType}
   const [showHint, setShowHint] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [progress, setProgress] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [loading, setLoading] = useState(true);
-  
-  const hints = [
+
+  // Divide the hints into separate arrays for videos and images
+  const videoHints = [
     "Look for unnatural blinking patterns or lack of blinking in videos.",
-    "Check for inconsistent lighting or shadows on the face.",
     "Watch for unnatural facial movements or expressions.",
+    "Listen for mismatched audio and lip movements."
+  ];
+
+  const imageHints = [
+    "Check for inconsistent lighting or shadows on the face.",
     "Look for blurring or warping around the edges of the face.",
     "Check for unnatural skin tones or texture.",
-    "Listen for mismatched audio and lip movements.",
     "Look for unnatural hair details that might be poorly rendered.",
     "Check for teeth that look too perfect or unnatural."
   ];
-  
-  useEffect(() => {
-    fetchRandomImage();
-  }, []);
-  
-  const fetchRandomImage = async () => {
+
+  // Combined media fetch function – mediaType should be either "image" or "video"
+  const fetchRandomMedia = async (mediaType) => {
     setLoading(true);
     try {
       const labelType = Math.random() > 0.5 ? "Real" : "Fake";
-      const response = await fetch(`/api/image/random?label=${labelType}`);
-      const data = await response.json();
-      console.log(data);
-      
-      const randomHint = hints[Math.floor(Math.random() * hints.length)];
-      setCurrentImage({
+      const endpoint =
+        mediaType === "image"
+          ? `/api/image/random?label=${labelType}`
+          : `/api/video/random?label=${labelType}`;
+
+      const res = await fetch(endpoint);
+      const data = await res.json();
+
+      setCurrentMedia({
         url: data.url,
         label: labelType,
-        hint: randomHint
+        hint:
+          mediaType === "image"
+            ? imageHints[Math.floor(Math.random() * imageHints.length)]
+            : videoHints[Math.floor(Math.random() * videoHints.length)],
+        mediaType, // storing the type might be useful for later
       });
-    } catch (error) {
-      console.error("Error fetching image:", error);
-      setCurrentImage({
+    } catch (err) {
+      console.error(err);
+      setCurrentMedia({
         url: "https://example.com/placeholder.jpg",
         label: Math.random() > 0.5 ? "Real" : "Fake",
-        hint: hints[0]
+        hint: mediaType === "image" ? imageHints[0] : videoHints[0],
+        mediaType,
       });
     } finally {
       setLoading(false);
     }
   };
-  
+
+  // On initial load, randomly choose a media type to fetch
+  useEffect(() => {
+    const initialType = Math.random() > 0.5 ? "video" : "image";
+    fetchRandomMedia(initialType);
+  }, []);
+
   const handleGuess = (guess) => {
-    if (!currentImage) return;
-    
+    if (!currentMedia) return;
     setGameStarted(true);
-    
-    if (guess === currentImage.label) {
-      const pointsEarned = 10 + (streak * 5);
-      setScore(score + pointsEarned);
-      setStreak(streak + 1);
-      setFeedback(`✅ Correct! +${pointsEarned} points (Streak: ${streak + 1})`);
+
+    if (guess === currentMedia.label) {
+      const pts = 10 + streak * 5;
+      setScore((prev) => prev + pts);
+      setStreak((prev) => prev + 1);
+      setFeedback(`✅ Correct! +${pts} points (Streak: ${streak + 1})`);
     } else {
       setStreak(0);
-      setFeedback(`❌ Incorrect! The image was ${currentImage.label}.`);
+      setFeedback(`❌ Incorrect! The media was ${currentMedia.label}.`);
     }
-    
-    setProgress(Math.min(progress + 10, 100));
+
+    // Smooth-scroll to the bottom of the card so feedback/next button is visible
+    setTimeout(() => {
+      const el = document.querySelector(`.${styles.cardContent}`);
+      el?.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    }, 100);
   };
-  
-  // Custom Progress Bar Component
-  const ProgressBar = ({ value }) => (
-    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-    <div 
-    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
-    style={{ width: `${value}%` }}
-    />
-    </div>
-  );
-  
-  // ... (rest of your component remains the same) ...
-  
-  return (
-    <div className="max-w-xl mx-auto py-10 px-4">
-    <h1 className="text-3xl font-bold mb-6 text-center">
-    Deepfake Detection Challenge
-    </h1>
-    
-    <div className="flex justify-between items-center mb-4">
-    <div className="font-semibold">Score: {score}</div>
-    <div className="font-semibold">Streak: {streak}</div>
-    </div>
-    
-    <ProgressBar value={progress} />
-    
-    <Card>
-    <CardContent className="flex flex-col gap-4 pt-6">
-    <div className="aspect-video bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
-    {loading ? (
-      <div className="text-gray-500">Loading media...</div>
-    ) : currentImage?.url ? (
-      currentImage.url.match(/\.(mp4|mov|webm)$/i) ? (
-        <video
-          key={currentImage.url} // Important for re-rendering
-          src={currentImage.url}
-          controls
-          className="w-full h-full object-cover"
-          onLoadedData={() => setLoading(false)}
-          onError={(e) => {
-            console.error("Video error:", e);
-            setLoading(false);
-          }}
-          playsInline
-          muted
-          autoPlay
-        >
-          Your browser does not support videos.
-        </video>
-      ) : (
-        <img
-          key={currentImage.url} // Important for re-rendering
-          src={currentImage.url}
-          alt="Is this real or fake?"
-          className="w-full h-full object-contain"
-          onLoad={() => setLoading(false)}
-          onError={(e) => {
-            console.error("Image error:", e);
-            setLoading(false);
-          }}
-        />
-      )
-    ) : (
-      <div className="text-red-500">No media available</div>
-    )}
-  </div>
-    
-    <div className="flex gap-4 justify-center">
-    <Button 
-    onClick={() => handleGuess("Real")}
-    variant={feedback.includes("Real") ? "default" : "outline"}
-    disabled={!!feedback}
-    >
-    Real
-    </Button>
-    <Button 
-    onClick={() => handleGuess("Fake")}
-    variant={feedback.includes("Fake") ? "default" : "outline"}
-    disabled={!!feedback}
-    >
-    Fake
-    </Button>
-    <Button 
-    variant="outline" 
-    onClick={() => setShowHint(!showHint)}
-    disabled={!!feedback}
-    >
-    {showHint ? "Hide Hint" : "Show Hint"}
-    </Button>
-    </div>
-    
-    {showHint && (
-      <div className="bg-blue-50 p-4 rounded-lg">
-      <p className="text-sm text-blue-800">💡 Hint: {currentImage?.hint}</p>
-      </div>
-    )}
-    
-    {feedback && (
-      <div className={`p-4 rounded-lg ${
-        feedback.includes("✅") ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
-      }`}>
-      <p className="font-medium">{feedback}</p>
-      {feedback.includes("❌") && (
-        <p className="text-sm mt-1">Try the next one!</p>
-      )}
-      </div>
-    )}
-    
-    <div className="flex justify-center gap-4">
-    {feedback ? (
-      <Button onClick={nextImage}>Next Image</Button>
-    ) : (
-      <Button variant="outline" onClick={resetGame}>
-      Reset Game
-      </Button>
-    )}
-    </div>
-    </CardContent>
-    </Card>
-    
-    {gameStarted && (
-      <div className="mt-6 text-center text-sm text-muted-foreground">
-      <p>Current streak bonus: {streak * 5} extra points per correct answer</p>
-      </div>
-    )}
-    </div>
-  );
-  
-  function nextImage() {
+
+  // Next challenge loads a new media item with a random type
+  const nextMedia = () => {
     setFeedback("");
     setShowHint(false);
-    fetchRandomImage();
-  }
-  
-  function resetGame() {
+    const nextType = Math.random() > 0.5 ? "video" : "image";
+    fetchRandomMedia(nextType);
+  };
+
+  const resetGame = () => {
     setScore(0);
     setStreak(0);
-    setProgress(0);
     setGameStarted(false);
     setFeedback("");
     setShowHint(false);
-    fetchRandomImage();
-  }
+    const nextType = Math.random() > 0.5 ? "video" : "image";
+    fetchRandomMedia(nextType);
+  };
+
+  const ProgressBar = () => {
+    const pct = Math.min((score / 500) * 100, 100);
+    return (
+      <div className={styles.progressContainer}>
+        <div className={styles.progressHeader}>
+          <span>Progress to mastery</span>
+          <span>{score}/500</span>
+        </div>
+        <div className={styles.progressBar}>
+          <div className={styles.progressFill} style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className={styles.pageWrapper}>
+      <div className={styles.container}>
+        <div className={styles.gameContainer}>
+          <div className={styles.cardContainer}>
+            {/* ---------- header ---------- */}
+            <header className={styles.header}>
+              <h1 className={styles.title}>Deepfake Detection Challenge</h1>
+              <p className={styles.subtitle}>
+                Test your ability to spot AI‑generated media
+              </p>
+            </header>
+
+            {/* ---------- score ---------- */}
+            <section className={styles.scorePanel}>
+              <div className={styles.scoreRow}>
+                <div className={styles.scoreItem}>
+                  Score: <span className={styles.scoreValue}>{score}</span>
+                </div>
+                <div className={styles.scoreItem}>
+                  Streak: <span className={styles.streakValue}>{streak}x</span>
+                </div>
+              </div>
+            </section>
+
+            <ProgressBar />
+
+            {/* ---------- main card ---------- */}
+            <Card className={styles.mainCard}>
+              <CardContent className={styles.cardContent}>
+                <div className={styles.mediaContainer}>
+                  {loading ? (
+                    <div className={styles.loadingContainer}>
+                      <div className={styles.loadingSpinner} />
+                      <p className={styles.loadingText}>Loading media…</p>
+                    </div>
+                  ) : currentMedia?.url ? (
+                    currentMedia.url.match(/\.(mp4|mov|webm)$/i) ? (
+                      <video
+                        key={currentMedia.url}
+                        className={styles.media}
+                        controls
+                        playsInline
+                        muted
+                        autoPlay
+                        onLoadedData={() => setLoading(false)}
+                        onError={() => setLoading(false)}
+                      >
+                        <source src={currentMedia.url} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : (
+                      <img
+                        key={currentMedia.url}
+                        src={currentMedia.url}
+                        className={styles.media}
+                        alt="Guess if real or fake"
+                        onLoad={() => setLoading(false)}
+                        onError={() => setLoading(false)}
+                      />
+                    )
+                  ) : (
+                    <div className={styles.errorMessage}>No media available</div>
+                  )}
+                </div>
+
+                {/* Guess buttons */}
+                {!feedback && (
+                  <div className={styles.buttonGroup}>
+                    <Button
+                      className={styles.gameButton}
+                      onClick={() => handleGuess("Real")}
+                    >
+                      Real
+                    </Button>
+                    <Button
+                      className={styles.gameButton}
+                      onClick={() => handleGuess("Fake")}
+                    >
+                      Fake
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className={styles.gameButton}
+                      onClick={() => setShowHint(!showHint)}
+                    >
+                      {showHint ? "Hide Hint" : "Show Hint"}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Hint */}
+                {showHint && (
+                  <div className={styles.hintContainer}>
+                    <p className={styles.hintText}>
+                      <span>💡</span> Hint: {currentMedia?.hint}
+                    </p>
+                  </div>
+                )}
+
+                {/* Feedback + Next Challenge */}
+                {feedback && (
+                  <div
+                    className={`${styles.feedback} ${
+                      feedback.includes("✅")
+                        ? styles.correctFeedback
+                        : styles.incorrectFeedback
+                    }`}
+                  >
+                    <p className={styles.feedbackText}>{feedback}</p>
+                    {feedback.includes("❌") && (
+                      <p className={styles.encouragement}>Try the next one!</p>
+                    )}
+                    <Button className={styles.nextButton} onClick={nextMedia}>
+                      Next Challenge
+                    </Button>
+                  </div>
+                )}
+
+                {/* Reset (only when guessing) */}
+                {!feedback && (
+                  <div className={styles.actionButtonContainer}>
+                    <Button
+                      variant="outline"
+                      className={styles.resetButton}
+                      onClick={resetGame}
+                    >
+                      Reset Game
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Mastery status */}
+            {gameStarted && (
+              <div className={styles.masteryContainer}>
+                <p className={styles.streakBonus}>
+                  Current streak bonus: {streak * 5} extra points per correct answer
+                </p>
+                {score >= 500 ? (
+                  <p className={styles.congratulations}>
+                    🎉 Congratulations! You’ve reached mastery!
+                  </p>
+                ) : (
+                  <p className={styles.pointsNeeded}>
+                    {500 - score} points needed for mastery
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
