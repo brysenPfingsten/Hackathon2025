@@ -1,9 +1,10 @@
 #what {
-    background-color: #1a1a1a;
-    padding: 2rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-  }
+  background-color: #1a1a1a;
+  padding: 2rem 2.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
   
   #what h2 {
     color: #646cff;
