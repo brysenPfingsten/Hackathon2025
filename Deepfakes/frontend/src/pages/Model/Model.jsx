@@ -1,6 +1,6 @@
 import pytor from '../../assets/pytorchvisual.jpg';
 import '../Model/model.css';
-import {UploadWindow} from '../../components/ui/upload';
+import UploadWindow from '../../components/ui/upload';
 
 export default function Model() {
   return (
