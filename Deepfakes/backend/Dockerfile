@@ -11,4 +11,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["bash", "-c", "python build_image_db.py && python build_video_db.py && uvicorn main:app --host 0.0.0.0 --port 8000"]
+#CMD ["bash", "-c", "python build_image_db.py && python build_video_db.py && uvicorn main:app --host 0.0.0.0 --port 8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
